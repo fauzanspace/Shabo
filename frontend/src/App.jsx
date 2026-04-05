@@ -21,7 +21,7 @@ function App() {
     e.preventDefault();
     setIsProcessing(true);
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/generate_questions', {
+      const response = await fetch('http://https://shabo.onrender.com/api/v1/generate_questions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -56,7 +56,7 @@ function App() {
     const currentQ = questions[currentQuestionIndex];
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/evaluate_answer', {
+      const response = await fetch('http://https://shabo.onrender.com/api/v1/evaluate_answer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
