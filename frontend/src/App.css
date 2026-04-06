@@ -536,50 +536,329 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 .footer-bottom { padding: 24px 36px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
 .footer-copy { font-size: 13px; color: rgba(255,255,255,0.25); }
 
-/* --- MOBILE RESPONSIVENESS (PHONES & TABLETS) --- */
+/* =========================================
+   MOBILE RESPONSIVE FIXES (PHONES & TABLETS)
+   ========================================= */
 @media (max-width: 768px) {
-  /* 1. Shrink the massive hero text */
-  .section-h1 {
-    font-size: 42px;
-    line-height: 1.1;
+  /* --- 1. LANDING PAGE FIXES --- */
+  
+  /* Make Hero text fit */
+  .hero h1 { font-size: 48px !important; }
+  .section-h2 { font-size: 36px !important; }
+  .hero { padding: 40px 16px 0; overflow-x: hidden; }
+
+  
+  
+  /* Fix the CSS Grids (Forces everything into 1 vertical column) */
+  .feat-row, .vs-grid, .stats, .steps, .footer {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
   }
   
-  .section-h2 {
-    font-size: 32px;
+  /* Reset the alternating right-to-left layout for mobile */
+  .feat-row.rev { direction: ltr; }
+  .feat-row.rev > * { direction: ltr; }
+
+  /* Fit the MacBook Mockup */
+  .mac-desktop-wrapper {
+    transform: scale(0.70);
+    transform-origin: top center;
+    margin-bottom: -15%; /* Pulls the next section up to fill the empty space */
   }
 
-  /* 2. Shrink the Shabo logo inside the Free card */
-  .shabo-split-logo {
-    font-size: 32px !important;
-  }
+  /* Fix the Free Pricing Card */
+  .free-pricing-card { padding: 40px 20px; }
   
-  /* 3. Squeeze the padding on the Free card so it fits the screen */
-  .free-pricing-card {
-    padding: 40px 20px;
-    border-radius: 16px;
+  /* --- 2. APP INTERFACE FIXES --- */
+  
+  /* Shrink the main App Container so it fits on a phone screen */
+  .container { 
+    padding: 32px 20px !important; 
+    margin: 40px 16px !important; 
   }
 
-  /* 4. Force side-by-side flexboxes to stack vertically on small screens */
-  .vs-grid, 
-  .steps-container, 
-  .pricing-grid,
-  .stats {
+  /* Stack the Setup Options and Results metrics */
+  .mode-grid, .metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Stack the Mic and Submit buttons */
+  .action-buttons {
     flex-direction: column !important;
-    gap: 24px;
+  }
+  .action-buttons button {
+    width: 100% !important; 
   }
 
-  /* 5. Make sure the macOS window mockup resizes properly */
-  .mac-window {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
+  /* Shrink the 'Shabo Final Report' title */
+  .results-container h1 { 
+    font-size: 28px !important; 
+    text-align: center;
   }
 
-  /* 6. General padding adjustments for the main app container */
-  .app-container, 
-  .setup-card {
+  /* 1. Fix the Navbar Squish */
+  .nav {
+    padding: 12px 16px !important; /* Reduces side padding so it doesn't squish */
+  }
+
+  .nav-mid {
+    display: none !important; /* Hides 'Pricing' and 'How it works' on small phones */
+  }
+
+  /* 2. Fix the Hero Buttons (Stack them so they are easier to tap) */
+  .hero-btns {
+    flex-direction: column !important;
+    padding: 0 20px;
+  }
+
+  .landing-page .btn-primary, 
+  .landing-page .btn-ghost {
+    width: 100% !important; /* Make buttons full-width and chunky for thumbs */
+  }
+
+  /* 3. Adjust the Mac Mockup just a tiny bit more */
+  .mac-desktop-wrapper {
+    transform: scale(0.9); /* Makes it slightly larger since we have more room now */
+    margin-top: 20px;
+    margin-bottom: -20%; 
+  }
+
+  .nav-cta {
+    padding: 6px 12px !important; /* Slightly smaller for mobile */
+    font-size: 12px !important;   /* Matches the UI density better */
+    white-space: nowrap;          /* Prevents the text from ever wrapping */
+  }
+
+  /* --- 1. Mac Menu Bar (Tiny Scale) --- */
+  .mac-menu-bar {
+    height: 20px !important; 
+    padding: 0 8px !important;
+    font-size: 8.5px !important; /* Small enough to fit all words */
+  }
+
+  
+  .mac-menu-left, .mac-menu-right {
+    gap: 6px !important; /* Tight spacing between File, Edit, View, etc. */
+  }
+
+  /* --- 2. Inner App Window Scaling --- */
+  .product-wrap {
+    width: 85% !important;   /* Uses almost full width of the mockup */
+    height: 65% !important; 
+    border-radius: 8px !important;
+  }
+  .winbar {
+    padding: 6px 12px !important;
+  }
+  .win-controls {
+    gap: 4px !important;
+    left: 10px !important;
+  }
+  .dot {
+    width: 8px !important;
+    height: 8px !important;
+  }
+  .winbar-title {
+    font-size: 9px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Prevents long title from pushing buttons off */
+  }
+
+  /* Scale down the text INSIDE the mockup so it doesn't overflow */
+  .product-body { padding: 12px !important; }
+  .ai-question { font-size: 14px !important; }
+  .user-answer, .feedback-section p { 
+    font-size: 12px !important; 
+    padding: 8px !important; 
+    margin-top: 8px !important;
+  }
+
+  /* --- 3. The Dock Scaling --- */
+  .mac-dock {
+    height: 38px !important;
+    padding: 0 6px !important;
+    gap: 5px !important;
+    bottom: 8px !important;
+    border-radius: 12px !important;
+  }
+  .dock-icon {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 6px !important;
+  }
+  /* Scale the tiny logo inside the dock icon */
+  .dock-icon .shabo-split-logo {
+    font-size: 10px !important;
+  }
+  .dock-divider {
+    height: 20px !important;
+    margin: 0 2px !important;
+  }
+
+  /* --- 4. Deep Scale for Mockup Content (Overrides Inline Styles) --- */
+  
+  .product-body {
+    padding: 12px !important; /* Overrides the inline 40px padding */
+  }
+
+  .product-body .progress-bar {
+    font-size: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .product-body .result-card {
+    padding: 12px !important; /* Shrinks the white box container */
+  }
+
+  /* Shrink the AI Question "Tell me about a time..." */
+  .product-body .result-card h3 {
+    font-size: 11px !important; /* Overrides the inline 22px */
+    gap: 6px !important;
+  }
+
+  /* Shrink the Bot Icon inside the mockup */
+  .product-body .result-card h3 svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Shrink "You: Our team had 48 hours..." */
+  .product-body .user-answer {
+    font-size: 9px !important;
+    margin-top: 8px !important;
+    padding: 8px !important;
+  }
+
+  /* Fix the two score cards (Delivery & Logic) */
+  .product-body .metrics-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important; /* Keep them side-by-side but tiny */
+    gap: 6px !important;
+    margin-top: 10px !important;
+  }
+
+  .product-body .card {
+    padding: 8px !important;
+  }
+
+  .product-body .card h4 {
+    font-size: 7px !important;
+  }
+
+  .product-body .card p {
+    font-size: 10px !important; /* Overrides the score font size */
+  }
+
+  /* Shrink the Feedback & Missing STAR text */
+  .product-body .feedback-section {
+    padding: 8px !important;
+    margin-top: 10px !important;
+  }
+
+  .product-body .feedback-section p {
+    font-size: 8.5px !important;
+    margin: 4px 0 !important;
+  }
+
+  /* 1. Tighten the main container even more to save vertical space */
+  .container { 
+    padding: 24px 16px !important; 
+    margin: 20px 12px !important; /* Moves the whole app higher up the screen */
+  }
+
+  /* 2. Center the labels to match your logo and tagline */
+  .field-group label {
+    text-align: center;
     width: 100%;
-    padding: 16px;
-    margin: 16px auto;
+    margin-bottom: 8px;
+  }
+
+  /* 3. Make the mode cards more compact for phones */
+  .mode-card {
+    padding: 12px !important;
+  }
+  
+  .mode-title {
+    font-size: 13px !important;
+  }
+
+  .mode-desc {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* 4. Center the "questions per session" section */
+  .q-count-row {
+    justify-content: center;
+    margin-top: -8px;
+  }
+
+  /* 1. Prevent the "iOS Zoom" bug and improve readability */
+  textarea {
+    font-size: 16px !important; /* Critical: Stops phones from auto-zooming on tap */
+    min-height: 140px !important; /* Gives the user more room to see their response */
+    padding: 12px !important;
+    min-width: 90% !important; /* Prevents the textarea from stretching too wide on tablets */
+  }
+
+  /* 2. Polish the Question text */
+  
+  .ai-question svg {
+    width: 24px !important; /* Scale the bot icon to match the text */
+    height: 24px !important;
+  }
+
+  .focus-skill {
+    font-size: 10px !important;
+    margin-bottom: 20px !important;
+    text-align: center; /* Centers it under the centered question */
+    width: 100%;
+  }
+
+  /* --- 5. RESULTS SCREEN POLISH --- */
+  
+  /* Shrink the massive Report Title */
+  .results-container h1 {
+    font-size: 24px !important;
+    margin-bottom: 24px !important;
+    gap: 8px !important;
+  }
+
+  /* Fix the Chart height (Stops the "width -1" console warning) */
+  .results-container > div[style*="height: 250"] {
+    height: 200px !important;
+    margin-bottom: 30px !important;
+  }
+
+  /* Shrink the Result Cards */
+  .results-container .result-card {
+    padding: 20px 16px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .results-container .result-card h3 {
+    font-size: 16px !important; /* Smaller question text */
+    line-height: 1.4 !important;
+  }
+
+  .results-container .user-answer {
+    font-size: 12px !important;
+    padding: 12px !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* Stack the "Logic" and "Delivery" cards on the results screen */
+  .results-container .metrics-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* The Restart Button */
+  .restart-btn {
+    width: 100% !important;
+    padding: 16px !important;
+    font-size: 14px !important;
   }
 }
