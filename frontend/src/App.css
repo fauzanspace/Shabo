@@ -535,3 +535,51 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
 .footer-link:hover { color: #fff; }
 .footer-bottom { padding: 24px 36px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
 .footer-copy { font-size: 13px; color: rgba(255,255,255,0.25); }
+
+/* --- MOBILE RESPONSIVENESS (PHONES & TABLETS) --- */
+@media (max-width: 768px) {
+  /* 1. Shrink the massive hero text */
+  .section-h1 {
+    font-size: 42px;
+    line-height: 1.1;
+  }
+  
+  .section-h2 {
+    font-size: 32px;
+  }
+
+  /* 2. Shrink the Shabo logo inside the Free card */
+  .shabo-split-logo {
+    font-size: 32px !important;
+  }
+  
+  /* 3. Squeeze the padding on the Free card so it fits the screen */
+  .free-pricing-card {
+    padding: 40px 20px;
+    border-radius: 16px;
+  }
+
+  /* 4. Force side-by-side flexboxes to stack vertically on small screens */
+  .vs-grid, 
+  .steps-container, 
+  .pricing-grid,
+  .stats {
+    flex-direction: column !important;
+    gap: 24px;
+  }
+
+  /* 5. Make sure the macOS window mockup resizes properly */
+  .mac-window {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  /* 6. General padding adjustments for the main app container */
+  .app-container, 
+  .setup-card {
+    width: 100%;
+    padding: 16px;
+    margin: 16px auto;
+  }
+}
