@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
@@ -28,7 +28,7 @@ print("Models loaded successfully!")
 class JobSetup(BaseModel):
     job_description: str
     mode: str
-    question_count: int = 5 # <-- NEW: Tells FastAPI to expect the number from React
+    question_count: int = 5 
 
 class InterviewSubmission(BaseModel):
     job_description: str
@@ -36,9 +36,9 @@ class InterviewSubmission(BaseModel):
     answer_text: str
 
 # --- ENDPOINT 1: QUESTION GENERATOR ---
+# Notice we removed "async" so FastAPI runs this in a safe background thread!
 @app.post("/api/v1/generate_questions")
-async def generate_questions(setup: JobSetup):
-    # NEW: The prompt now dynamically asks for exactly {setup.question_count} questions
+def generate_questions(setup: JobSetup):
     prompt = f"""
     Act as an expert Technical Recruiter. Generate exactly {setup.question_count} interview questions for this job:
     "{setup.job_description}"
@@ -62,47 +62,71 @@ async def generate_questions(setup: JobSetup):
     }}
     """
     
-    response = client.models.generate_content(
-        model='gemini-2.5-flash-lite',
-        contents=prompt,
-        config={'response_mime_type': 'application/json'}
-    )
-    return json.loads(response.text)
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash-lite',
+            contents=prompt,
+            config={'response_mime_type': 'application/json'}
+        )
+        
+        # Clean the text just in case Gemini adds markdown backticks
+        raw_text = response.text.strip()
+        if raw_text.startswith("```json"):
+            raw_text = raw_text[7:]
+        if raw_text.endswith("```"):
+            raw_text = raw_text[:-3]
+            
+        return json.loads(raw_text.strip())
+        
+    except Exception as e:
+        # If anything goes wrong, catch it cleanly instead of crashing the server
+        raise HTTPException(status_code=500, detail=f"AI Error: {str(e)}")
 
 # --- ENDPOINT 2: ANSWER EVALUATOR ---
 @app.post("/api/v1/evaluate_answer")
-async def evaluate_answer(submission: InterviewSubmission):
-    # Part A: Custom ML Clarity Check
-    vectorized_text = tfidf.transform([submission.answer_text])
-    clarity_prob = model.predict_proba(vectorized_text)[0][1] * 100
-    clarity_status = "Action-Oriented" if clarity_prob > 50 else "Hesitant"
+def evaluate_answer(submission: InterviewSubmission):
+    try:
+        # Part A: Custom ML Clarity Check
+        vectorized_text = tfidf.transform([submission.answer_text])
+        clarity_prob = model.predict_proba(vectorized_text)[0][1] * 100
+        clarity_status = "Action-Oriented" if clarity_prob > 50 else "Hesitant"
 
-    # Part B: Gemini Logic Check
-    prompt = f"""
-    Act as a Recruiter evaluating an interview answer.
-    Job Description: {submission.job_description}
-    Question Asked: {submission.question_text}
-    Candidate Answer: {submission.answer_text}
-    
-    Evaluate if they answered the specific question logically and used the STAR method.
-    
-    Return a valid JSON object with this exact structure:
-    {{
-        "star_method_used": true/false,
-        "missing_elements": ["List missing STAR elements"],
-        "logic_score": [Rate 1-10],
-        "feedback": "Two sentences of direct, actionable feedback."
-    }}
-    """
-    
-    response = client.models.generate_content(
-        model='gemini-2.5-flash-lite',
-        contents=prompt,
-        config={'response_mime_type': 'application/json'}
-    )
-    llm_evaluation = json.loads(response.text)
-    
-    return {
-        "delivery_metrics": {"status": clarity_status, "confidence_score": round(clarity_prob, 2)},
-        "logic_metrics": llm_evaluation
-    }
+        # Part B: Gemini Logic Check
+        prompt = f"""
+        Act as a Recruiter evaluating an interview answer.
+        Job Description: {submission.job_description}
+        Question Asked: {submission.question_text}
+        Candidate Answer: {submission.answer_text}
+        
+        Evaluate if they answered the specific question logically and used the STAR method.
+        
+        Return a valid JSON object with this exact structure:
+        {{
+            "star_method_used": true/false,
+            "missing_elements": ["List missing STAR elements"],
+            "logic_score": [Rate 1-10],
+            "feedback": "Two sentences of direct, actionable feedback."
+        }}
+        """
+        
+        response = client.models.generate_content(
+            model='gemini-2.5-flash-lite',
+            contents=prompt,
+            config={'response_mime_type': 'application/json'}
+        )
+        
+        # Clean the text again
+        raw_text = response.text.strip()
+        if raw_text.startswith("```json"):
+            raw_text = raw_text[7:]
+        if raw_text.endswith("```"):
+            raw_text = raw_text[:-3]
+            
+        llm_evaluation = json.loads(raw_text.strip())
+        
+        return {
+            "delivery_metrics": {"status": clarity_status, "confidence_score": round(clarity_prob, 2)},
+            "logic_metrics": llm_evaluation
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Evaluation Error: {str(e)}")
