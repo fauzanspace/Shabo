@@ -148,7 +148,7 @@ function App() {
 
               {/* TEXTAREA */}
               <div className="field-group">
-                <label>What role are we hacking today?</label>
+                <label>What role are you preparing for today?</label>
                 <textarea 
                   rows="4" 
                   placeholder="Paste the job description or role title here so Shabo can tailor the questions..." 
@@ -269,10 +269,20 @@ function App() {
                     <p>{item.evaluation.logic_metrics.logic_score} / 10</p>
                   </div>
                 </div>
-                <div className="feedback-section">
-                  <p><strong>Feedback:</strong> {item.evaluation.logic_metrics.feedback}</p>
-                  <p><strong>Missing STAR:</strong> {item.evaluation.logic_metrics.missing_elements.join(", ") || "None"}</p>
-                </div>
+               <div className="feedback-section">
+    <p><strong>Feedback:</strong> {item.evaluation.logic_metrics.feedback}</p>
+    <p><strong>Missing STAR:</strong> {item.evaluation.logic_metrics.missing_elements.join(", ") || "None"}</p>
+</div>
+
+{/* Notice we changed 'result' to 'item.evaluation' here! */}
+{item.evaluation.logic_metrics.perfect_sample_answer && (
+    <div className="mt-4 p-4 border-l-4 border-green-500 bg-gray-800 rounded">
+        <h4 className="text-green-400 font-bold mb-2">How you should have answered:</h4>
+        <p className="text-gray-300 italic">
+            "{item.evaluation.logic_metrics.perfect_sample_answer}"
+        </p>
+    </div>
+)}
               </motion.div>
             ))}
             <button onClick={() => window.location.reload()} className="restart-btn" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '16px', marginTop: '40px' }}>
